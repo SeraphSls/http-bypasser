@@ -1,82 +1,76 @@
 # http-bypasser
 
 Scraping modern websites using **raw HTTP requests** — no Selenium, no Playwright, no headless browsers.  
-This project demonstrates how to extract data from [Remotive](https://remotive.io/) — a remote job platform — by **bypassing the frontend** and directly querying the underlying Algolia API.
+This project demonstrates how to extract data from [Remotive](https://remotive.io/), a remote job platform, by **bypassing the frontend** and directly querying the underlying Algolia API.
 
-## 🧠 What I did
+## What was done
 
-- Opened the site and jumped straight into the Network tab (DevTools).
-- Spotted an XHR request triggered during job search and pagination.
-- Found that the site uses **Algolia** as a search engine — the endpoint gives it away:  
-  `https://<appid>-dsn.algolia.net/1/indexes/*/queries`
-- Inside the request payload:
-  - There’s a `page=X` param to control pagination.
-  - You can set `query=python`, `query=node`, etc.
-  - Up to **50 results per page** using `hitsPerPage=50`.
+The site was inspected using the browser's DevTools (Network tab).  
+An XHR request was identified during job searches and pagination.  
+It revealed the use of **Algolia** as the search engine, based on the endpoint:
 
-### 🔐 Headers detected
+`https://<appid>-dsn.algolia.net/1/indexes/*/queries`
 
-- `X-Algolia-API-Key` → public key, no real auth
-- `X-Algolia-Application-Id` → Algolia app instance ID
-- Standard User-Agent, Origin, and Referer from the browser
+Inside the request payload:
 
-These requests are sent via **POST**, and by default the site uses:
+- The `page=X` parameter controls pagination
+- The `query=python` or `query=node` parameter defines the search term
+- Up to 50 results per page using `hitsPerPage=50`
 
-```
-Content-Type: application/x-www-form-urlencoded
-```
+## Required headers
 
-But for cleaner structure, we use **`application/json`** — it works the same, and it's easier to manage.
+- `X-Algolia-API-Key` (public key, no real auth)
+- `X-Algolia-Application-Id` (Algolia app ID)
+- Standard browser headers like User-Agent, Origin, and Referer
 
-## 🔁 Manual pagination
+Requests are sent via **POST**.  
+Although the site uses `application/x-www-form-urlencoded`, we switched to `application/json` for cleaner and easier payload handling.
 
-Scrape page by page using the param:
+## Manual pagination
+
+Pagination is controlled via the `params` field. Example:
 
 ```json
 "params": "query=python&page=0&hitsPerPage=50"
 ```
 
-> That gives the first 50 “python” job results.  
-> Then increment to `page=1`, `page=2`, and so on.
+This returns the first 50 job listings for "python".  
+To get more results, increment the `page` value.
 
-## 📁 Project structure
+## Project structure
 
-```bash
+```
 http-bypasser/
 ├── node_scrapper/
-│   ├── index.js         # Node.js scraper using Axios
+│   ├── index.js
 │   ├── package.json
 ├── python/
-│   ├── scraper.py       # Python scraper using requests
+│   ├── scraper.py
 │   ├── requirements.txt
 ├── output/
 │   ├── jobs_python.json
 │   ├── jobs_node.json
-└── README.md            # You are here
+└── README.md
 ```
 
-## 📤 Exported data
+## Exported data
 
-Each scraper dumps a structured `.json` output with:
+Each scraper saves a `.json` file containing:
 
 - Job title
-- Company
+- Company name
 - Location
 - Job type
-- Direct URL
+- Direct job URL
 - Date posted
 
-## 🚫 No browser needed
+## No browser involved
 
-This project **does NOT use**:
-- Selenium
-- Playwright
-- Puppeteer
+This project does **not** rely on Selenium, Playwright, Puppeteer, or any browser engine.  
+The goal is to showcase **real reverse engineering** — understanding how the web app works and hitting the underlying APIs directly.
 
-The idea is **real reverse engineering** — inspecting the web app, understanding how data flows, and hitting the exact endpoints yourself.
+## License
 
-## 📜 License
-
-This project is licensed under **Creative Commons BY-NC 4.0**.  
+Licensed under **Creative Commons BY-NC 4.0**.  
 You may use, modify, and share this code **for non-commercial purposes only**.  
-Wanna sell it or embed into a paid product? Contact me first.
+For commercial use or integration into paid products, contact me first.
