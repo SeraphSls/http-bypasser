@@ -1,6 +1,6 @@
 # http-bypasser
 
-Scraping modern websites using **raw HTTP requests** — no Selenium, no Playwright, no headless browsers.  
+Scraping modern websites using **raw HTTP requests**  no Selenium, no Playwright, no headless browsers.  
 This project demonstrates how to extract data from [Remotive](https://remotive.io/), a remote job platform, by **bypassing the frontend** and directly querying the underlying Algolia API.
 
 ## What was done
@@ -67,7 +67,7 @@ Each scraper saves a `.json` file containing:
 ## No browser involved
 
 This project does **not** rely on Selenium, Playwright, Puppeteer, or any browser engine.  
-The goal is to showcase **real reverse engineering** — understanding how the web app works and hitting the underlying APIs directly.
+The goal is to showcase **real reverse engineering** understanding how the web app works and hitting the underlying APIs directly.
 
 ## License
 
